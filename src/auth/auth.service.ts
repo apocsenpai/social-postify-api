@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.userService.userExists(signInDto.email);
+    const user = await this.userService.findUserByEmail(signInDto.email);
     if (!user) throw new UnauthorizedException('Email or password is invalid!');
 
     const validPassword = bcrypt.compareSync(signInDto.password, user.password);
@@ -41,5 +41,14 @@ export class AuthService {
     );
 
     return { token };
+  }
+
+  checkToken(token: string) {
+    const tokenData = this.jwtService.verify(token, {
+      issuer: this.ISSUER,
+      audience: this.AUDIENCE,
+    });
+
+    return tokenData;
   }
 }
