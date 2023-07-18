@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersRepository } from './users.repository';
-import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +14,9 @@ export class UsersService {
 
     const hashPassword = bcrypt.hashSync(data.password, 10);
 
-    await this.usersRepository.create({ ...data, password: hashPassword });
+    const user = new User({ ...data, password: hashPassword });
+
+    await this.usersRepository.create(user);
   }
 
   async findUserById(id: string): Promise<User | null> {

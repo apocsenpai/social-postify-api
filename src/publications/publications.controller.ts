@@ -13,7 +13,7 @@ import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { UserRequest } from 'src/auth/decorators/user.decorator';
-import { User } from '@prisma/client';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('publications')
 @UseGuards(AuthGuard)
