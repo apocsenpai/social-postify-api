@@ -29,8 +29,8 @@ export class PublicationsController {
   }
 
   @Get()
-  findAll() {
-    return this.publicationsService.findAll();
+  findAllByUserId(@UserRequest() user: User) {
+    return this.publicationsService.findAllByUserId(user.id);
   }
 
   @Get(':id')

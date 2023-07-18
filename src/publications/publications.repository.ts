@@ -15,4 +15,8 @@ export class PublicationsRepository {
   async findByTitle(title: string) {
     return this.prisma.publication.findUnique({ where: { title } });
   }
+
+  async findAllByUserId(userId: string) {
+    return this.prisma.publication.findMany({ where: { userId } });
+  }
 }

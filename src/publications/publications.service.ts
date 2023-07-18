@@ -16,8 +16,8 @@ export class PublicationsService {
     await this.publicationRepository.create(createPublicationDto, userId);
   }
 
-  findAll() {
-    return `This action returns all publications`;
+  async findAllByUserId(userId: string) {
+    return this.publicationRepository.findAllByUserId(userId);
   }
 
   findOne(id: number) {
