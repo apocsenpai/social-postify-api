@@ -1,8 +1,13 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,9 +17,12 @@ export class UsersService {
     if (await this.findUserByEmail(data.email))
       throw new ConflictException('User already exists');
 
-    const hashPassword = bcrypt.hashSync(data.password, 10);
+    const createBody = {
+      ...data,
+      password: this.encryptPassword(data.password),
+    };
 
-    const user = new User({ ...data, password: hashPassword });
+    const user = new User(createBody);
 
     await this.usersRepository.create(user);
   }
@@ -25,5 +33,22 @@ export class UsersService {
 
   async findUserByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findByEmail(email);
+  }
+
+  async update(id: string, data: UpdateUserDto, user: User) {
+    if (id !== user.id) throw new ForbiddenException('Not allowed');
+
+    const updateBody = data.password
+      ? {
+          ...data,
+          password: this.encryptPassword(data.password),
+        }
+      : data;
+
+    return this.usersRepository.update(updateBody, id);
+  }
+
+  encryptPassword(password: string) {
+    return bcrypt.hashSync(password, 10);
   }
 }
